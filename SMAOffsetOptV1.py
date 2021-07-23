@@ -26,35 +26,44 @@ class SMAOffsetOptV1(IStrategy):
 
 	# hyperopt and paste results here
 	# Buy hyperspace params:
+	# buy_params = {
+	# 	"base_nb_candles_buy": 34,
+	# 	"buy_trigger": 'SMA',
+	# 	"low_offset": 0.957,
+	# }
 	buy_params = {
 		"base_nb_candles_buy": 34,
 		"buy_trigger": 'SMA',
-		"low_offset": 0.957,
+		"low_offset": 0.9,
 	}
 	# Sell hyperspace params:
+	# sell_params = {
+	# 	"base_nb_candles_sell": 50,
+	# 	"high_offset": 0.846,
+	# 	"sell_trigger": 'SMA',
+	# }
+	# Sell hyperspace params:
 	sell_params = {
-		"base_nb_candles_sell": 74,
-		"high_offset": 0.846,
-		"sell_trigger": 'SMA',
+		"base_nb_candles_sell": 30,
+		"high_offset": 1.012,
+		"sell_trigger": 'EMA',
 	}
-
 	# Stoploss:
-	stoploss = -0.20
+	stoploss = -0.5
 
 	# ROI table:
 	minimal_roi = {
-		"0": 0.119,
-		"36": 0.093,
-		"49": 0.036,
-		"70": 0
+		"0": 0.10,
+		"60": 0.07,
+		"90": 0.056,
+		"220": 0
 	}
-
-	base_nb_candles_buy = IntParameter(5, 80, default=buy_params['base_nb_candles_buy'], space='buy')
-	base_nb_candles_sell = IntParameter(5, 80, default=sell_params['base_nb_candles_sell'], space='sell')
-	low_offset = DecimalParameter(0.8, 0.99, default=buy_params['low_offset'], space='buy')
-	high_offset = DecimalParameter(0.8, 1.1, default=sell_params['high_offset'], space='sell')
-	buy_trigger = CategoricalParameter(ma_types.keys(), default=buy_params['buy_trigger'], space='buy')
-	sell_trigger = CategoricalParameter(ma_types.keys(), default=sell_params['sell_trigger'], space='sell')
+	base_nb_candles_buy = IntParameter(5, 80, default=buy_params['base_nb_candles_buy'], space='buy', optimize=False, load=True)
+	base_nb_candles_sell = IntParameter(5, 80, default=sell_params['base_nb_candles_sell'], space='sell', optimize=False, load=True)
+	low_offset = DecimalParameter(0.8, 0.99, default=buy_params['low_offset'], space='buy', optimize=False, load=True)
+	high_offset = DecimalParameter(0.8, 1.1, default=sell_params['high_offset'], space='sell', optimize=False, load=True)
+	buy_trigger = CategoricalParameter(ma_types.keys(), default=buy_params['buy_trigger'], space='buy', optimize=False, load=True)
+	sell_trigger = CategoricalParameter(ma_types.keys(), default=sell_params['sell_trigger'], space='sell', optimize=False, load=True)
 
 	# Trailing stop:
 	trailing_stop = True
@@ -69,7 +78,7 @@ class SMAOffsetOptV1(IStrategy):
 	sell_profit_only = False
 
 	process_only_new_candles = True
-	startup_candle_count = 74
+	startup_candle_count = 50
 
 	plot_config = {
 		'main_plot': {
@@ -96,8 +105,12 @@ class SMAOffsetOptV1(IStrategy):
 
 		dataframe.loc[
 			(
-					(dataframe['close'] < dataframe['ma_offset_buy']) &
-					(dataframe['volume'] > 0)
+				# (dataframe['close'].shift(1) < dataframe['ma_offset_buy']) &
+    #             (dataframe['low'] < dataframe['ma_offset_buy']) &
+    #             (dataframe['close'] > dataframe['ma_offset_buy']) &
+				# (dataframe['close'] < dataframe['ma_offset_buy']) &
+				(qtpylib.crossed_above(dataframe['close'], dataframe['ma_offset_buy'])) &
+				(dataframe['volume'] > 0)
 			),
 			'buy'] = 1
 		return dataframe
@@ -108,7 +121,8 @@ class SMAOffsetOptV1(IStrategy):
 
 		dataframe.loc[
 			(
-					(dataframe['close'] > dataframe['ma_offset_sell']) &
+					#(dataframe['close'] > dataframe['ma_offset_sell']) &
+					(qtpylib.crossed_below(dataframe['close'], dataframe['ma_offset_sell'])) &
 					(dataframe['volume'] > 0)
 			),
 			'sell'] = 1

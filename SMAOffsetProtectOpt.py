@@ -60,7 +60,10 @@ class SMAOffsetProtectOpt(IStrategy):
 
     # ROI table:
     minimal_roi = {
-        "0": 0.01
+        "0": 0.20,
+        "38": 0.074,
+        "78": 0.025,
+        "194": 0
     }
 
     # Stoploss:
@@ -107,7 +110,7 @@ class SMAOffsetProtectOpt(IStrategy):
     informative_timeframe = '1h'
 
     process_only_new_candles = True
-    startup_candle_count = 30
+    startup_candle_count = 200
 
     # plot_config = {
     #     'main_plot': {
@@ -144,7 +147,7 @@ class SMAOffsetProtectOpt(IStrategy):
 
         # Elliot
         dataframe['EWO'] = EWO(dataframe, self.fast_ewo.value, self.slow_ewo.value)
-        
+
         # RSI
         dataframe['rsi'] = ta.RSI(dataframe, timeperiod=14)
 
@@ -152,10 +155,15 @@ class SMAOffsetProtectOpt(IStrategy):
 
     def populate_buy_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
         conditions = []
+        dataframe['ma_buy'] = (dataframe[f'ma_buy_{self.base_nb_candles_buy.value}'] * self.low_offset.value)
 
         conditions.append(
             (
-                (dataframe['close'] < (dataframe[f'ma_buy_{self.base_nb_candles_buy.value}'] * self.low_offset.value)) &
+                # (dataframe['close'].shift(1) < dataframe['ma_buy']) &
+                # (dataframe['low'] < dataframe['ma_buy']) &
+                # (dataframe['close'] > dataframe['ma_buy']) &
+                # (qtpylib.crossed_above(dataframe['close'], dataframe['ma_buy'])) &
+                (dataframe['close'] < dataframe['ma_buy']) &
                 (dataframe['EWO'] > self.ewo_high.value) &
                 (dataframe['rsi'] < self.rsi_buy.value) &
                 (dataframe['volume'] > 0)
@@ -164,7 +172,11 @@ class SMAOffsetProtectOpt(IStrategy):
 
         conditions.append(
             (
-                (dataframe['close'] < (dataframe[f'ma_buy_{self.base_nb_candles_buy.value}'] * self.low_offset.value)) &
+                # (dataframe['close'].shift(1) < dataframe['ma_buy']) &
+                # (dataframe['low'] < dataframe['ma_buy']) &
+                # (dataframe['close'] > dataframe['ma_buy']) &
+                # (qtpylib.crossed_above(dataframe['close'], dataframe['ma_buy'])) &
+                (dataframe['close'] < dataframe['ma_buy']) &
                 (dataframe['EWO'] < self.ewo_low.value) &
                 (dataframe['volume'] > 0)
             )
@@ -180,10 +192,11 @@ class SMAOffsetProtectOpt(IStrategy):
 
     def populate_sell_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
         conditions = []
-
+        dataframe['ma_sell']= (dataframe[f'ma_sell_{self.base_nb_candles_sell.value}'] * self.high_offset.value)
         conditions.append(
             (
-                (dataframe['close'] > (dataframe[f'ma_sell_{self.base_nb_candles_sell.value}'] * self.high_offset.value)) &
+                #(dataframe['close'] > (dataframe[f'ma_sell_{self.base_nb_candles_sell.value}'] * self.high_offset.value)) &
+                (qtpylib.crossed_below(dataframe['close'], dataframe['ma_sell'])) &
                 (dataframe['volume'] > 0)
             )
         )
