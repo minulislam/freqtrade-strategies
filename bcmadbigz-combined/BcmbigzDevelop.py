@@ -908,6 +908,8 @@ class BcmbigzDevelop(IStrategy):
     def populate_sell_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
 
         conditions = []
+        dataframe.loc[:, "sell"] = 0
+
         if self.bzv7_sell_condition_0_enable.value:
             conditions.append(
                 (
@@ -933,6 +935,7 @@ class BcmbigzDevelop(IStrategy):
             dataframe.loc[reduce(lambda x, y: x | y, conditions), "sell"] = 1
 
         return dataframe
+
 # SSL Channels
 def SSLChannels(dataframe, length = 7):
     df = dataframe.copy()
