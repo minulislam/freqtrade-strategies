@@ -19,9 +19,9 @@ class BcmbigzDevelop(IStrategy):
     INTERFACE_VERSION = 2
 
     minimal_roi = {
-        "0": 0.028,         # I feel lucky!
-        "10": 0.018,
-        "40": 0.005,
+        "0": 0.038,         # I feel lucky!
+        "10": 0.028,
+        "40": 0.015,
         "180": 0.018,        # We're going up?
     }
 
@@ -39,9 +39,9 @@ class BcmbigzDevelop(IStrategy):
 
     # Trailing stoploss
     trailing_stop = False
-    trailing_only_offset_is_reached = False
+    trailing_only_offset_is_reached = True
     trailing_stop_positive = 0.01
-    trailing_stop_positive_offset = 0.025
+    trailing_stop_positive_offset = 0.03
 
     # Custom stoploss
     use_custom_stoploss = True
@@ -92,8 +92,9 @@ class BcmbigzDevelop(IStrategy):
         #############
         # Enable/Disable conditions
         "bzv7_sell_condition_0_enable": False,
-        "v8_sell_condition_0_enable": False,
-        "v8_sell_condition_1_enable": False,
+        "v8_sell_condition_0_enable": True,
+        "v8_sell_condition_1_enable": True,
+        "sell_condition_0_enable": True,
     }
 
     # if you want to see which buy conditions were met
@@ -101,6 +102,11 @@ class BcmbigzDevelop(IStrategy):
     # logger will output the buy and trade exit conditions
     cust_log_verbose = False
     ############################################################################
+    bzv7_sell_condition_0_enable = CategoricalParameter([True, False], default=False, space="sell", optimize=False, load=True)
+    v8_sell_condition_0_enable = CategoricalParameter([True, False], default=True, space="sell", optimize=False, load=True)
+    v8_sell_condition_1_enable = CategoricalParameter([True, False], default=True, space="sell", optimize=False, load=True)
+    sell_condition_0_enable = CategoricalParameter([True, False], default=True, space="sell", optimize=False, load=True)
+
     # minimum conditions to match in buy
     buy_minimum_conditions = IntParameter(1, 2, default=1, space='buy', optimize=False, load=True)
     #  Strategy: BigZ07
@@ -119,7 +125,6 @@ class BcmbigzDevelop(IStrategy):
     bzv7_buy_condition_11_enable = CategoricalParameter([True, False], default=True, space='buy', optimize=False, load=True)
     bzv7_buy_condition_12_enable = CategoricalParameter([True, False], default=True, space='buy', optimize=False, load=True)
     bzv7_buy_condition_13_enable = CategoricalParameter([True, False], default=True, space='buy', optimize=False, load=True)
-    bzv7_sell_condition_0_enable = CategoricalParameter([True, False], default=False, space="sell", optimize=False, load=True)
 
     bzv7_buy_bb20_close_bblowerband_safe_1 = DecimalParameter(0.7, 1.1, default=0.989, space='buy', optimize=False, load=True)
     bzv7_buy_bb20_close_bblowerband_safe_2 = DecimalParameter(0.7, 1.1, default=0.982, space='buy', optimize=False, load=True)
@@ -153,8 +158,6 @@ class BcmbigzDevelop(IStrategy):
     v8_buy_condition_2_enable = CategoricalParameter([True, False], default=True, space="buy", optimize=False, load=True)
     v8_buy_condition_3_enable = CategoricalParameter([True, False], default=True, space="buy", optimize=False, load=True)
     v8_buy_condition_4_enable = CategoricalParameter([True, False], default=True, space="buy", optimize=False, load=True)
-    v8_sell_condition_0_enable = CategoricalParameter([True, False], default=True, space="sell", optimize=False, load=True)
-    v8_sell_condition_1_enable = CategoricalParameter([True, False], default=True, space="sell", optimize=False, load=True)
 
     v8_sell_rsi_main = DecimalParameter(72.0, 90.0, default=80, space="sell", decimals=2, optimize=False, load=True)
     buy_dip_threshold_0 = DecimalParameter(0.001, 0.1, default=0.015, space="buy", decimals=3, optimize=False, load=True)
@@ -219,7 +222,7 @@ class BcmbigzDevelop(IStrategy):
     def custom_sell(self, pair: str, trade: 'Trade', current_time: 'datetime', current_rate: float,
                     current_profit: float, **kwargs):
 
-        # return False
+        return False
 
         dataframe, _ = self.dp.get_analyzed_dataframe(pair, self.timeframe)
         last_candle = dataframe.iloc[-1].squeeze()
@@ -266,6 +269,27 @@ class BcmbigzDevelop(IStrategy):
 
         return False
 
+
+    def custom_stoplossv6(self, pair: str, trade: 'Trade', current_time: datetime,
+                        current_rate: float, current_profit: float, **kwargs) -> float:
+        # Manage losing trades and open room for better ones.
+
+        if (current_profit < 0) & (current_time - timedelta(minutes=240) > trade.open_date_utc):
+            return 0.01
+        return 0.99
+
+    def custom_stoplossv8(self, pair: str, trade: 'Trade', current_time: datetime,
+                        current_rate: float, current_profit: float, **kwargs) -> float:
+        # Manage losing trades and open room for better ones.
+        if (current_profit < 0) & (current_time - timedelta(minutes=280) > trade.open_date_utc):
+            return 0.01
+        elif (current_profit < self.sell_custom_stoploss_1.value):
+            dataframe, _ = self.dp.get_analyzed_dataframe(pair, self.timeframe)
+            last_candle = dataframe.iloc[-1].squeeze()
+            if (last_candle is not None):
+                if (last_candle['sma_200_dec']) & (last_candle['sma_200_dec_1h']):
+                    return 0.01
+        return 0.99
 
     def custom_stoploss(self, pair: str, trade: 'Trade', current_time: datetime,
                         current_rate: float, current_profit: float, **kwargs) -> float:
@@ -342,8 +366,9 @@ class BcmbigzDevelop(IStrategy):
         dataframe['bb_middleband'] = bollinger['mid']
         dataframe['bb_upperband'] = bollinger['upper']
 
-        dataframe['volume_mean_slow'] = dataframe['volume'].rolling(window=48).mean()
 
+        dataframe['volume_mean_slow_48'] = dataframe['volume'].rolling(window=48).mean()
+        dataframe['volume_mean_slow_30'] = dataframe['volume'].rolling(window=30).mean()
         # EMA
         dataframe['ema_200'] = ta.EMA(dataframe, timeperiod=200)
         dataframe['ema_26'] = ta.EMA(dataframe, timeperiod=26)
@@ -456,7 +481,7 @@ class BcmbigzDevelop(IStrategy):
                 )
                 & (dataframe["close"] < dataframe["ema_50"])
                 & (dataframe["close"] < self.buy_bb20_close_bblowerband.value * dataframe["bb_lowerband"])
-                & (dataframe["volume"] < (dataframe["volume_mean_slow"].shift(1) * self.buy_bb20_volume.value))
+                & (dataframe["volume"] < (dataframe["volume_mean_slow_30"].shift(1) * self.buy_bb20_volume.value))
                 & (self.v8_buy_condition_1_enable.value == True)
             ),
             "v8_buy_condition_1_enable",
@@ -545,8 +570,8 @@ class BcmbigzDevelop(IStrategy):
                 & (dataframe["close"] < dataframe["ema_50"])
                 & (dataframe["close"] < 0.99 * dataframe["bb_lowerband"])
                 & (
-                    (dataframe["volume"] < (dataframe["volume_mean_slow"].shift(1) * 21))
-                    | (dataframe["volume_mean_slow"] > (dataframe["volume_mean_slow"].shift(30) * 0.4))
+                    (dataframe["volume"] < (dataframe["volume_mean_slow_30"].shift(1) * 21))
+                    | (dataframe["volume_mean_slow_30"] > (dataframe["volume_mean_slow_30"].shift(30) * 0.4))
                 )
                 & (self.v6_buy_condition_0_enable.value == True)
             ),
@@ -557,8 +582,8 @@ class BcmbigzDevelop(IStrategy):
                 (dataframe["close"] < dataframe["ema_50"])
                 & (dataframe["close"] < 0.975 * dataframe["bb_lowerband"])
                 & (
-                    (dataframe["volume"] < (dataframe["volume_mean_slow"].shift(1) * 20))
-                    | (dataframe["volume_mean_slow"] > dataframe["volume_mean_slow"].shift(30) * 0.4)
+                    (dataframe["volume"] < (dataframe["volume_mean_slow_30"].shift(1) * 20))
+                    | (dataframe["volume_mean_slow_30"] > dataframe["volume_mean_slow_30"].shift(30) * 0.4)
                 )
                 & (dataframe["rsi_1h"] < 15)  # Don't buy if someone drop the market.
                 & (dataframe["volume"] < (dataframe["volume"].shift() * 4))
@@ -575,7 +600,7 @@ class BcmbigzDevelop(IStrategy):
                 & ((dataframe["ema_26"].shift() - dataframe["ema_12"].shift()) > (dataframe["open"] / 100))
                 & (
                     (dataframe["volume"] < (dataframe["volume"].shift() * 4))
-                    | (dataframe["volume_mean_slow"] > dataframe["volume_mean_slow"].shift(30) * 0.4)
+                    | (dataframe["volume_mean_slow_30"] > dataframe["volume_mean_slow_30"].shift(30) * 0.4)
                 )
                 & (dataframe["close"] < (dataframe["bb_lowerband"]))
                 & (self.v6_buy_condition_2_enable.value == True)
@@ -605,8 +630,8 @@ class BcmbigzDevelop(IStrategy):
                 (dataframe['close'] * 1.024 < dataframe['open'].shift(3)) &
                 (dataframe['rsi_1h'] < 71) &
 
-                (dataframe['volume_mean_slow'] > dataframe['volume_mean_slow'].shift(48) * self.bzv7_buy_volume_pump_1.value) &
-                (dataframe['volume_mean_slow'] * self.bzv7_buy_volume_pump_1.value < dataframe['volume_mean_slow'].shift(48)) &
+                (dataframe['volume_mean_slow_48'] > dataframe['volume_mean_slow_48'].shift(48) * self.bzv7_buy_volume_pump_1.value) &
+                (dataframe['volume_mean_slow_48'] * self.bzv7_buy_volume_pump_1.value < dataframe['volume_mean_slow_48'].shift(48)) &
                 (dataframe['volume'] > 0) # Make sure Volume is not 0
             ),
             "bzv7_buy_condition_0_enable",
@@ -622,8 +647,8 @@ class BcmbigzDevelop(IStrategy):
                 (dataframe['rsi_1h'] < 69) &
                 (dataframe['open'] > dataframe['close']) &
 
-                (dataframe['volume_mean_slow'] > dataframe['volume_mean_slow'].shift(48) * self.bzv7_buy_volume_pump_1.value) &
-                (dataframe['volume_mean_slow'] * self.bzv7_buy_volume_pump_1.value < dataframe['volume_mean_slow'].shift(48)) &
+                (dataframe['volume_mean_slow_48'] > dataframe['volume_mean_slow_48'].shift(48) * self.bzv7_buy_volume_pump_1.value) &
+                (dataframe['volume_mean_slow_48'] * self.bzv7_buy_volume_pump_1.value < dataframe['volume_mean_slow_48'].shift(48)) &
                 (dataframe['volume'] < (dataframe['volume'].shift() * self.bzv7_buy_volume_drop_1.value)) &
                 ((dataframe['open'] - dataframe['close']) < dataframe['bb_upperband'].shift(2) - dataframe['bb_lowerband'].shift(2)) &
 
@@ -640,8 +665,8 @@ class BcmbigzDevelop(IStrategy):
 
                 (dataframe['close'] < dataframe['bb_lowerband'] *  self.bzv7_buy_bb20_close_bblowerband_safe_2.value) &
 
-                (dataframe['volume_mean_slow'] > dataframe['volume_mean_slow'].shift(48) * self.bzv7_buy_volume_pump_1.value) &
-                (dataframe['volume_mean_slow'] * self.bzv7_buy_volume_pump_1.value < dataframe['volume_mean_slow'].shift(48)) &
+                (dataframe['volume_mean_slow_48'] > dataframe['volume_mean_slow_48'].shift(48) * self.bzv7_buy_volume_pump_1.value) &
+                (dataframe['volume_mean_slow_48'] * self.bzv7_buy_volume_pump_1.value < dataframe['volume_mean_slow_48'].shift(48)) &
                 (dataframe['volume'] < (dataframe['volume'].shift() * self.bzv7_buy_volume_drop_1.value)) &
                 (dataframe['open'] - dataframe['close'] < dataframe['bb_upperband'].shift(2) - dataframe['bb_lowerband'].shift(2)) &
                 (dataframe['volume'] > 0)
@@ -658,8 +683,8 @@ class BcmbigzDevelop(IStrategy):
                 (dataframe['close'] < dataframe['bb_lowerband']) &
                 (dataframe['rsi'] < self.bzv7_buy_rsi_3.value) &
 
-                (dataframe['volume_mean_slow'] > dataframe['volume_mean_slow'].shift(48) * self.bzv7_buy_volume_pump_1.value) &
-                (dataframe['volume_mean_slow'] * self.bzv7_buy_volume_pump_1.value < dataframe['volume_mean_slow'].shift(48)) &
+                (dataframe['volume_mean_slow_48'] > dataframe['volume_mean_slow_48'].shift(48) * self.bzv7_buy_volume_pump_1.value) &
+                (dataframe['volume_mean_slow_48'] * self.bzv7_buy_volume_pump_1.value < dataframe['volume_mean_slow_48'].shift(48)) &
                 (dataframe['volume'] < (dataframe['volume'].shift() * self.bzv7_buy_volume_drop_3.value)) &
 
                 (dataframe['volume'] > 0)
@@ -675,8 +700,8 @@ class BcmbigzDevelop(IStrategy):
 
                 (dataframe['close'] < dataframe['bb_lowerband']) &
 
-                (dataframe['volume_mean_slow'] > dataframe['volume_mean_slow'].shift(48) * self.bzv7_buy_volume_pump_1.value) &
-                (dataframe['volume_mean_slow'] * self.bzv7_buy_volume_pump_1.value < dataframe['volume_mean_slow'].shift(48)) &
+                (dataframe['volume_mean_slow_48'] > dataframe['volume_mean_slow_48'].shift(48) * self.bzv7_buy_volume_pump_1.value) &
+                (dataframe['volume_mean_slow_48'] * self.bzv7_buy_volume_pump_1.value < dataframe['volume_mean_slow_48'].shift(48)) &
                 (dataframe['volume'] < (dataframe['volume'].shift() * self.bzv7_buy_volume_drop_1.value)) &
                 (dataframe['volume'] > 0)
             ),
@@ -696,8 +721,8 @@ class BcmbigzDevelop(IStrategy):
                 (dataframe['close'] < (dataframe['bb_lowerband'])) &
 
                 (dataframe['volume'] < (dataframe['volume'].shift() * self.bzv7_buy_volume_drop_1.value)) &
-                (dataframe['volume_mean_slow'] > dataframe['volume_mean_slow'].shift(48) * self.bzv7_buy_volume_pump_1.value) &
-                (dataframe['volume_mean_slow'] * self.bzv7_buy_volume_pump_1.value < dataframe['volume_mean_slow'].shift(48)) &
+                (dataframe['volume_mean_slow_48'] > dataframe['volume_mean_slow_48'].shift(48) * self.bzv7_buy_volume_pump_1.value) &
+                (dataframe['volume_mean_slow_48'] * self.bzv7_buy_volume_pump_1.value < dataframe['volume_mean_slow_48'].shift(48)) &
                 (dataframe['volume'] > 0)
             ),
             "bzv7_buy_condition_5_enable",
@@ -714,8 +739,8 @@ class BcmbigzDevelop(IStrategy):
                 ((dataframe['ema_26'].shift() - dataframe['ema_12'].shift()) > (dataframe['open']/100)) &
                 (dataframe['close'] < (dataframe['bb_lowerband'])) &
 
-                (dataframe['volume_mean_slow'] > dataframe['volume_mean_slow'].shift(48) * self.bzv7_buy_volume_pump_1.value) &
-                (dataframe['volume_mean_slow'] * self.bzv7_buy_volume_pump_1.value < dataframe['volume_mean_slow'].shift(48)) &
+                (dataframe['volume_mean_slow_48'] > dataframe['volume_mean_slow_48'].shift(48) * self.bzv7_buy_volume_pump_1.value) &
+                (dataframe['volume_mean_slow_48'] * self.bzv7_buy_volume_pump_1.value < dataframe['volume_mean_slow_48'].shift(48)) &
                 (dataframe['volume'] < (dataframe['volume'].shift() * self.bzv7_buy_volume_drop_1.value)) &
                 (dataframe['volume'] > 0)
             ),
@@ -733,8 +758,8 @@ class BcmbigzDevelop(IStrategy):
                 ((dataframe['ema_26'].shift() - dataframe['ema_12'].shift()) > (dataframe['open']/100)) &
 
                 (dataframe['volume'] < (dataframe['volume'].shift() * self.bzv7_buy_volume_drop_1.value)) &
-                (dataframe['volume_mean_slow'] > dataframe['volume_mean_slow'].shift(48) * self.bzv7_buy_volume_pump_1.value) &
-                (dataframe['volume_mean_slow'] * self.bzv7_buy_volume_pump_1.value < dataframe['volume_mean_slow'].shift(48)) &
+                (dataframe['volume_mean_slow_48'] > dataframe['volume_mean_slow_48'].shift(48) * self.bzv7_buy_volume_pump_1.value) &
+                (dataframe['volume_mean_slow_48'] * self.bzv7_buy_volume_pump_1.value < dataframe['volume_mean_slow_48'].shift(48)) &
                 (dataframe['volume'] > 0)
             ),
             "bzv7_buy_condition_7_enable",
@@ -763,8 +788,8 @@ class BcmbigzDevelop(IStrategy):
                 (dataframe['rsi'] < self.bzv7_buy_rsi_2.value) &
 
                 (dataframe['volume'] < (dataframe['volume'].shift() * self.bzv7_buy_volume_drop_1.value)) &
-                (dataframe['volume_mean_slow'] > dataframe['volume_mean_slow'].shift(48) * self.bzv7_buy_volume_pump_1.value) &
-                (dataframe['volume_mean_slow'] * self.bzv7_buy_volume_pump_1.value < dataframe['volume_mean_slow'].shift(48)) &
+                (dataframe['volume_mean_slow_48'] > dataframe['volume_mean_slow_48'].shift(48) * self.bzv7_buy_volume_pump_1.value) &
+                (dataframe['volume_mean_slow_48'] * self.bzv7_buy_volume_pump_1.value < dataframe['volume_mean_slow_48'].shift(48)) &
                 (dataframe['volume'] > 0)
             ),
             "bzv7_buy_condition_9_enable",
@@ -831,8 +856,8 @@ class BcmbigzDevelop(IStrategy):
                 (dataframe['rsi_1h'] < 72.8) &
                 (dataframe['open'] > dataframe['close']) &
 
-                (dataframe['volume_mean_slow'] > dataframe['volume_mean_slow'].shift(48) * self.bzv7_buy_volume_pump_1.value) &
-                (dataframe['volume_mean_slow'] * self.bzv7_buy_volume_pump_1.value < dataframe['volume_mean_slow'].shift(48)) &
+                (dataframe['volume_mean_slow_48'] > dataframe['volume_mean_slow_48'].shift(48) * self.bzv7_buy_volume_pump_1.value) &
+                (dataframe['volume_mean_slow_48'] * self.bzv7_buy_volume_pump_1.value < dataframe['volume_mean_slow_48'].shift(48)) &
                 (dataframe['volume'] < (dataframe['volume'].shift() * self.bzv7_buy_volume_drop_1.value)) &
                 ((dataframe['open'] - dataframe['close']) < dataframe['bb_upperband'].shift(2) - dataframe['bb_lowerband'].shift(2)) &
 
@@ -850,8 +875,8 @@ class BcmbigzDevelop(IStrategy):
                 (dataframe['cmf'] < -0.435) &
                 (dataframe['rsi'] < 22) &
 
-                (dataframe['volume_mean_slow'] > dataframe['volume_mean_slow'].shift(48) * self.bzv7_buy_volume_pump_1.value) &
-                (dataframe['volume_mean_slow'] * self.bzv7_buy_volume_pump_1.value < dataframe['volume_mean_slow'].shift(48)) &
+                (dataframe['volume_mean_slow_48'] > dataframe['volume_mean_slow_48'].shift(48) * self.bzv7_buy_volume_pump_1.value) &
+                (dataframe['volume_mean_slow_48'] * self.bzv7_buy_volume_pump_1.value < dataframe['volume_mean_slow_48'].shift(48)) &
                 (dataframe['volume'] > 0)
             ),
             "bzv7_buy_condition_13_enable",
@@ -908,8 +933,7 @@ class BcmbigzDevelop(IStrategy):
     def populate_sell_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
 
         conditions = []
-        dataframe.loc[:, "sell"] = 0
-
+        # dataframe.loc[:, "sell"] = 0
         if self.bzv7_sell_condition_0_enable.value:
             conditions.append(
                 (
@@ -930,6 +954,15 @@ class BcmbigzDevelop(IStrategy):
             )
         if self.v8_sell_condition_1_enable.value:
             conditions.append(((dataframe["rsi"] > self.v8_sell_rsi_main.value) & (dataframe["volume"] > 0)))
+        if self.sell_condition_0_enable.value:
+            conditions.append(
+                (
+                    (dataframe['close'] < dataframe['ema_200']) &
+                    (dataframe['close'] > dataframe['ema_50']) &
+                    (dataframe['rsi'] > 50) &
+                    (dataframe['volume'] > 0)
+                )
+            )
 
         if conditions:
             dataframe.loc[reduce(lambda x, y: x | y, conditions), "sell"] = 1

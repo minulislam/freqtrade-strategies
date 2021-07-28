@@ -24,16 +24,11 @@ def SSLChannels(dataframe, length=7):
 class BinClucMad(IStrategy):
     INTERFACE_VERSION = 2
 
-    # minimal_roi = {
-    #     "0": 0.028,  # I feel lucky!
-    #     "10": 0.018,
-    #     "40": 0.005,
-    # }
     minimal_roi = {
-         "0": 0.029,          # I feel lucky!
-        "10": 0.021,
-        "40": 0.005,
-        "180": 0.018,  # We're going up?
+        "0": 0.038,         # I feel lucky!
+        "10": 0.028,
+        "40": 0.015,
+        "180": 0.018,        # We're going up?
     }
 
     stoploss = -0.99  # effectively disabled.
