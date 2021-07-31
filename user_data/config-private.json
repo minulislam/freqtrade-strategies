@@ -7,7 +7,7 @@
         "secret": ""
     },
     "telegram": {
-        "enabled": true,
+        "enabled": false,
         "token": "",
         "chat_id": ""
     },
