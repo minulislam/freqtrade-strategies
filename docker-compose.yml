@@ -2,7 +2,7 @@
 version: '3'
 services:
   freqtrade:
-    image: freqtradeorg/freqtrade:develop
+    image: minulislam/freqtrade:develop
     # image: freqtradeorg/freqtrade:develop
     build:
       context: .
