@@ -1,6 +1,6 @@
 {
     "bot_name": "Freqtrade - TradingBot",
-    "fiat_display_currency": "EUR",
+    "fiat_display_currency": "USD",
     "exchange": {
         "name": "binance",
         "key": "",
