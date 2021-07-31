@@ -1,5 +1,9 @@
 FROM freqtradeorg/freqtrade:develop
 
-COPY --chown=1000:1000  tests/requirements.txt /freqtrade
+# Switch user to root if you must install something from apt
+# Don't forget to switch the user back below!
+USER root
 
-RUN pip install --user --no-cache-dir --no-build-isolation -r /freqtrade/requirements.txt
+RUN pip install pandas_ta
+
+USER ftuser
