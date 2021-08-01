@@ -1,7 +1,12 @@
-
+```sh
 
 cp user_data/config.json.example user_data/config.json
-cp user_data/config.json.example user_data/config.json
+cp user_data/config-private.json.example user_data/config-private.json
+CP docker-compose.yml.example docker-compose.yml
+CP .env.example .env
+
+```
+
 config-private.json format
 ```json
 {
