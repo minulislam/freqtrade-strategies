@@ -1,3 +1,7 @@
+
+
+cp user_data/config.json.example user_data/config.json
+cp user_data/config.json.example user_data/config.json
 config-private.json format
 ```json
 {
