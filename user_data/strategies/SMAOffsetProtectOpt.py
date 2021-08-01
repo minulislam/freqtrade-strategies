@@ -67,7 +67,7 @@ class SMAOffsetProtectOpt(IStrategy):
     }
 
     # Stoploss:
-    stoploss = -0.5
+    stoploss = -0.228
 
     # SMAOffset
     base_nb_candles_buy = IntParameter(
