@@ -1,3 +1,6 @@
+Must change .env values for port strategy
+container name 
+
 ```sh
 
 cp user_data/config.json.example user_data/config.json
