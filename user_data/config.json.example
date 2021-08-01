@@ -1,0 +1,87 @@
+{
+    "strategy": "BinClucMadDevelop",
+    "max_open_trades": 5,
+    "stake_currency": "USDT",
+    "stake_amount": "unlimited",
+    "tradable_balance_ratio": 0.99,
+    "fiat_display_currency": "USD",
+    "timeframe": "5m",
+    "dry_run": true,
+    "cancel_open_orders_on_exit": false,
+    "unfilledtimeout": {
+        "buy": 10,
+        "sell": 30,
+        "unit": "minutes"
+    },
+    "bid_strategy": {
+        "price_side": "bid",
+        "ask_last_balance": 0.0,
+        "use_order_book": true,
+        "order_book_top": 1,
+        "check_depth_of_market": {
+            "enabled": false,
+            "bids_to_ask_delta": 1
+        }
+    },
+    "ask_strategy": {
+        "price_side": "ask",
+        "use_order_book": true,
+        "order_book_top": 1,
+    },
+    "exchange": {
+        "name": "binance",
+        "key": "",
+        "secret": "",
+        "ccxt_config": {"enableRateLimit": true},
+        "ccxt_async_config": {
+            "enableRateLimit": true,
+            "rateLimit": 200
+        },
+        "pair_whitelist": [
+
+        ],
+        "pair_blacklist": [
+            ".*PERP",
+            ".*PERP/.*",
+            "BIDR/.*",
+            "BUSD/.*",
+            "BVND/.*",
+            ".*(BNB)/.*",
+            ".*(AUD|BRZ|CAD|CHF|DAI|EUR|GBP|HKD|IDRT|JPY|NGN|PAX|PAXG|RUB|SGD|SUSD|TRY|TUSD|UAH|USD|USDC|VAI|ZAR)/.*",
+            ".*(_PREMIUM|BEAR|BULL|DOWN|HALF|HEDGE|UP|[1235][SL]).*/.*",
+            
+        ]
+    },
+    "pairlists": [
+        {"method": "StaticPairList"}
+    ],
+    "_pairlists": [
+        {
+            "method": "VolumePairList",
+            "number_assets": 100,
+            "sort_key": "quoteVolume",
+            "refresh_period": 1800
+        },
+        {"method": "AgeFilter", "min_days_listed": 10},
+        {"method": "SpreadFilter", "max_spread_ratio": 0.005},
+        {"method": "PriceFilter", "low_price_ratio": 0.10},
+        {
+            "method": "RangeStabilityFilter",
+            "lookback_days": 3,
+            "min_rate_of_change": 0.1,
+            "refresh_period": 1440
+        },
+        {
+            "method": "VolumePairList",
+            "number_assets": 50,
+            "sort_key": "quoteVolume"
+        }
+    ],
+
+    "bot_name": "freqtrade",
+    "initial_state": "running",
+    "forcebuy_enable": true,
+    "internals": {
+        "process_throttle_secs": 5
+    }
+}
