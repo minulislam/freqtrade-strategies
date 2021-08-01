@@ -1,4 +1,5 @@
 {
+    "forcebuy_enable": false,
     "max_open_trades": 5,
     "stake_currency": "USDT",
     "stake_amount": "unlimited",
@@ -13,9 +14,9 @@
         "unit": "minutes"
     },
     "bid_strategy": {
-        "price_side": "bid",
+        "price_side": "ask",
         "ask_last_balance": 0.0,
-        "use_order_book": true,
+        "use_order_book": false,
         "order_book_top": 1,
         "check_depth_of_market": {
             "enabled": false,
@@ -23,8 +24,8 @@
         }
     },
     "ask_strategy": {
-        "price_side": "ask",
-        "use_order_book": true,
+        "price_side": "bid",
+        "use_order_book": false,
         "order_book_top": 1,
     },
     "exchange": {
@@ -63,7 +64,7 @@
         },
         {"method": "AgeFilter", "min_days_listed": 10},
         {"method": "SpreadFilter", "max_spread_ratio": 0.005},
-        {"method": "PriceFilter", "low_price_ratio": 0.10},
+        {"method": "PriceFilter", "low_price_ratio": 0.001},
         {
             "method": "RangeStabilityFilter",
             "lookback_days": 3,
@@ -79,7 +80,6 @@
 
     "bot_name": "freqtrade",
     "initial_state": "running",
-    "forcebuy_enable": true,
     "internals": {
         "process_throttle_secs": 5
     }
