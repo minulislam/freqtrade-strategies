@@ -23,5 +23,5 @@ services:
       --db-url sqlite:////freqtrade/user_data/tradesv3.live.sqlite
       --config /freqtrade/user_data/config.json
       --config /freqtrade/user_data/config-private.json
-      --config /freqtrade/user_data/${PAIRLIST:-binance-usdt-static}.json
+      --config /freqtrade/user_data/pairlist/${PAIRLIST:-binance-usdt-static}.json
       --strategy ${STRATEGY:-SampleStrategy}
