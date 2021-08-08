@@ -14,7 +14,7 @@ import logging
 logger = logging.getLogger(__name__)
 # -------------------------------------------------------------------------------------------------
 
-class BinClucMadSMASDevelop(IStrategy):
+class BinClucMadSMADevelop(IStrategy):
     INTERFACE_VERSION = 2
 
     # minimal_roi = {"0": 0.038, "20": 0.028, "40": 0.02, "60": 0.015, "180": 0.018, }
