@@ -33,15 +33,15 @@ class BinClucMadSMADevelop(IStrategy):
     ignore_roi_if_buy_signal = True
 
     # Trailing stoploss
-    trailing_stop = False
+    trailing_stop = True
     trailing_only_offset_is_reached = True
     trailing_stop_positive = 0.01
-    trailing_stop_positive_offset = 0.03
+    trailing_stop_positive_offset = 0.049
 
     # Custom stoploss
     use_custom_stoploss = False
     # Run "populate_indicators()" only for new candle.
-    process_only_new_candles = True
+    process_only_new_candles = False
 
     # Number of candles the strategy requires before producing valid signals
     startup_candle_count: int = 200
@@ -105,7 +105,7 @@ class BinClucMadSMADevelop(IStrategy):
     slow_ewo = IntParameter(100, 200, default=200, space="buy", optimize=False, load=True)
     ewo_low = DecimalParameter(-20.0, -8.0, default=-19.881, space="buy", optimize=True, load=True)
     ewo_high = DecimalParameter(2.0, 12.0, default=5.499, space="buy", optimize=True, load=True)
-    rsi_buy = IntParameter(30, 70, default=67, space="buy", optimize=True, load=True)
+    rsi_buy = IntParameter(30, 70, default=50, space="buy", optimize=True, load=True)
     # Buy CombinedBinHClucAndMADV6
 
     v6_buy_condition_0_enable = CategoricalParameter([True, False], default=True, space="buy", optimize=False, load=True)
