@@ -17,6 +17,11 @@ cp user_data/config-private.json.example user_data/config-private.json
 cp docker-compose.yml.example docker-compose.yml
 cp .env.example .env
 
+```
+update .env with your chosen strategy
+update config-private.json for your exchange key secret and telegram 
+
+```bash
 docker-compose run --rm freqtrade create-userdir --userdir user_data
 
 ```
