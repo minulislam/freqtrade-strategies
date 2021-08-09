@@ -1,7 +1,16 @@
 Must change .env values for port strategy
-container name 
+container name and pairlist 
+All configured by default just change the value
 
-```sh
+NOTE: for updating config.json better always use config-private.json file
+
+clone the repo
+
+```bash
+git clone https://github.com/minulislam/freqtrade-strategies.git 
+
+
+```bash
 
 cp user_data/config.json.example user_data/config.json
 cp user_data/config-private.json.example user_data/config-private.json
