@@ -1,4 +1,5 @@
 {
+    "dry_run": false,
     "forcebuy_enable": false,
     "max_open_trades": 5,
     "stake_currency": "USDT",
@@ -6,7 +7,6 @@
     "tradable_balance_ratio": 0.99,
     "fiat_display_currency": "USD",
     "timeframe": "5m",
-    "dry_run": true,
     "cancel_open_orders_on_exit": false,
     "unfilledtimeout": {
         "buy": 10,
@@ -78,20 +78,16 @@
         {"method": "PriceFilter", "low_price_ratio": 0.001},
         {
             "method": "RangeStabilityFilter",
-            "lookback_days": 3,
+            "lookback_days": 10,
             "min_rate_of_change": 0.1,
             "refresh_period": 1440
         },
-        {
-            "method": "VolumePairList",
-            "number_assets": 50,
-            "sort_key": "quoteVolume"
-        }
+
     ],
 
-    "bot_name": "freqtrade",
     "initial_state": "running",
     "internals": {
-        "process_throttle_secs": 5
+        "process_throttle_secs": 5,
+        "heartbeat_interval": 300
     }
 }
