@@ -226,29 +226,19 @@ class BinClucMadDevelop(IStrategy):
 
         return 0.99
 
-    def custom_stoploss(
-        self, pair: str, trade: "Trade", current_time: datetime, current_rate: float, current_profit: float, **kwargs
-    ) -> float:
+    def custom_stoploss(self, pair: str, trade: 'Trade', current_time: datetime,
+                        current_rate: float, current_profit: float, **kwargs) -> float:
         # Manage losing trades and open room for better ones.
         if (current_profit < 0) & (current_time - timedelta(minutes=280) > trade.open_date_utc):
             return 0.01
-        elif current_profit < self.sell_custom_stoploss_1.value:
+        elif (current_profit < self.sell_custom_stoploss_1.value):
             dataframe, _ = self.dp.get_analyzed_dataframe(pair, self.timeframe)
-            candle = dataframe.iloc[-1].squeeze()
-            if candle is not None:
-                # if (candle["sma_200_dec"]) & (candle["sma_200_dec_1h"]):
-                #     return 0.01
-                # We are at bottom. Wait...
-                if candle["rsi_1h"] < 30:
-                    return 0.99
-                # Are we still sinking?
-                if candle["close"] > candle["ema_200"]:
-                    if current_rate * 1.025 < candle["open"]:
-                        return 0.01
-                if current_rate * 1.015 < candle["open"]:
+            last_candle = dataframe.iloc[-1].squeeze()
+            if (last_candle is not None):
+                if (last_candle['sma_200_dec']) & (last_candle['sma_200_dec_1h']):
                     return 0.01
-
         return 0.99
+
 
     def custom_sell(
         self, pair: str, trade: "Trade", current_time: "datetime", current_rate: float, current_profit: float, **kwargs
