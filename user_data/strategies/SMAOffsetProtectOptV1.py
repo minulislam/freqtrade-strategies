@@ -88,12 +88,31 @@ class SMAOffsetProtectOptV1(IStrategy):
     process_only_new_candles = True
     startup_candle_count = 49
 
-    # plot_config = {
-    #     'main_plot': {
-    #         'ma_buy': {'color': 'orange'},
-    #         'ma_sell': {'color': 'orange'},
-    #     },
-    # }
+    plot_config = {
+      'main_plot': {
+        'ma_buy_16': {
+          'color': 'green'
+        },
+        'ma_sell_49': {
+          'color': 'red'
+        }
+      },
+      'subplots': {
+        'RSI': {
+          'rsi': {
+            'color': '#fe2e34',
+            'type': 'line'
+          }
+        },
+        'EWO': {
+          'EWO': {
+            'color': '#c7d729',
+            'type': 'line'
+          }
+        }
+      }
+    }
+
 
     use_custom_stoploss = False
 

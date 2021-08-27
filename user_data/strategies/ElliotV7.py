@@ -32,17 +32,7 @@ sell_params = {
       "high_offset_2": 0.997
     }
 
-def EWO(dataframe, ema_length=5, ema2_length=35):
-    df = dataframe.copy()
-    ema1 = ta.EMA(df, timeperiod=ema_length)
-    ema2 = ta.EMA(df, timeperiod=ema2_length)
-    emadif = (ema1 - ema2) / df['close'] * 100
-    return emadif
 
-def populate_indicators(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
-
-
-        return dataframe
 
 class ElliotV7(IStrategy):
     INTERFACE_VERSION = 2
@@ -242,3 +232,10 @@ class ElliotV7(IStrategy):
             ]=1
 
         return dataframe
+
+def EWO(dataframe, ema_length=5, ema2_length=35):
+    df = dataframe.copy()
+    ema1 = ta.EMA(df, timeperiod=ema_length)
+    ema2 = ta.EMA(df, timeperiod=ema2_length)
+    emadif = (ema1 - ema2) / df['close'] * 100
+    return emadif

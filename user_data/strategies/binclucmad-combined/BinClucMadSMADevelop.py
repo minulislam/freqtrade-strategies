@@ -38,12 +38,10 @@ class BinClucMadSMADevelop(IStrategy):
     trailing_stop_positive = 0.01
     trailing_stop_positive_offset = 0.049
 
-
     # Custom stoploss
     use_custom_stoploss = False
-
     # Run "populate_indicators()" only for new candle.
-    process_only_new_candles = True
+    process_only_new_candles = False
 
     # Number of candles the strategy requires before producing valid signals
     startup_candle_count: int = 200
@@ -85,7 +83,60 @@ class BinClucMadSMADevelop(IStrategy):
         "v8_sell_condition_1_enable": True,
         "smaoffset_sell_condition_0_enable": False,
     }
-
+    plot_config = {
+    'main_plot': {
+        'ma_buy': {'color': 'green'},
+        'ma_sell': {'color': 'red'},
+    },
+    'subplots': {
+        'BUY': {
+            'smaoffset_buy_condition_0_enable': {
+                'color': '#c0efdc',
+                'type': 'line'
+            },
+            'smaoffset_buy_condition_1_enable': {
+                'color': '#c0efdc',
+                'type': 'line'
+            },
+            'v6_buy_condition_0_enable': {
+                'color': '#c0efdc',
+                'type': 'line'
+            },
+            'v6_buy_condition_1_enable': {
+                'color': '#c0efdc',
+                'type': 'line'
+            },
+            'v6_buy_condition_2_enable': {
+                'color': '#c0efdc',
+                'type': 'line'
+            },
+            'v6_buy_condition_3_enable': {
+                'color': '#c0efdc',
+                'type': 'line'
+            },
+            'v8_buy_condition_0_enable': {
+                'color': '#c0efdc',
+                'type': 'line'
+            },
+            'v8_buy_condition_1_enable': {
+                'color': '#c0efdc',
+                'type': 'line'
+            },
+            'v8_buy_condition_2_enable': {
+                'color': '#c0efdc',
+                'type': 'line'
+            },
+            'v8_buy_condition_3_enable': {
+                'color': '#c0efdc',
+                'type': 'line'
+            },
+            'v8_buy_condition_4_enable': {
+                'color': '#c0efdc',
+                'type': 'line'
+            }
+        }
+    }
+}
     # if you want to see which buy conditions were met
     # or if there is an trade exit override due to high RSI set to True
     # logger will output the buy and trade exit conditions
@@ -185,10 +236,6 @@ class BinClucMadSMADevelop(IStrategy):
     buy_bb20_close_bblowerband_safe_2 = DecimalParameter(0.7, 1.1, default=0.982, space="buy", optimize=False, load=True)
     buy_volume_pump_1 = DecimalParameter(0.1, 0.9, default=0.4, space="buy", decimals=1, optimize=False, load=True)
     buy_volume_drop_1 = DecimalParameter(1, 10, default=4, space="buy", decimals=1, optimize=False, load=True)
-    # buy_volume_drop_1 = DecimalParameter(1, 10, default=3.8, space='buy', decimals=1, optimize=False, load=True)
-    buy_volume_drop_2 = DecimalParameter(1, 10, default=3, space='buy', decimals=1, optimize=False, load=True)
-    buy_volume_drop_3 = DecimalParameter(1, 10, default=2.7, space='buy', decimals=1, optimize=False, load=True)
-
     buy_rsi_1h_1 = DecimalParameter(10.0, 40.0, default=16.5, space="buy", decimals=1, optimize=False, load=True)
     buy_rsi_1h_2 = DecimalParameter(10.0, 40.0, default=15.0, space="buy", decimals=1, optimize=False, load=True)
     buy_rsi_1h_3 = DecimalParameter(10.0, 40.0, default=20.0, space="buy", decimals=1, optimize=False, load=True)
@@ -202,37 +249,6 @@ class BinClucMadSMADevelop(IStrategy):
     buy_minimum_conditions = IntParameter(1, 2, default=1, space='buy', optimize=False, load=True)
 
 
-    # Sell Hyperopt params
-
-    sell_roi_profit_1 = DecimalParameter(0.08, 0.16, default=0.1, space='sell', decimals=2, optimize=False, load=True)
-    sell_roi_rsi_1 = DecimalParameter(30.0, 38.0, default=34, space='sell', decimals=2, optimize=False, load=True)
-    sell_roi_profit_2 = DecimalParameter(0.02, 0.05, default=0.03, space='sell', decimals=2, optimize=False, load=True)
-    sell_roi_rsi_2 = DecimalParameter(34.0, 44.0, default=38, space='sell', decimals=2, optimize=False, load=True)
-    sell_roi_profit_3 = DecimalParameter(0.0, 0.0, default=0.0, space='sell', decimals=2, optimize=False, load=True)
-    sell_roi_rsi_3 = DecimalParameter(48.0, 56.0, default=50, space='sell', decimals=2, optimize=False, load=True)
-
-
-    def confirm_trade_exit(self, pair: str, trade: Trade, order_type: str, amount: float,
-                           rate: float, time_in_force: str, sell_reason: str, **kwargs) -> bool:
-        return True
-
-        dataframe, _ = self.dp.get_analyzed_dataframe(pair, self.timeframe)
-        last_candle = dataframe.iloc[-1].squeeze()
-        # Prevent sell, if there is more potential, in order to maximize profit
-        if (last_candle is not None):
-            current_profit = trade.calc_profit_ratio(rate)
-            if (sell_reason == 'roi'):
-                if (current_profit > self.sell_roi_profit_1.value):
-                    if (last_candle['rsi'] > self.sell_roi_rsi_1.value):
-                        return False
-                elif (current_profit > self.sell_roi_profit_2.value):
-                    if (last_candle['rsi'] > self.sell_roi_rsi_2.value):
-                        return False
-                elif (current_profit > self.sell_roi_profit_3.value):
-                    if (last_candle['rsi'] > self.sell_roi_rsi_3.value):
-                        return False
-        return True
-
 
 
     def custom_stoploss(
@@ -243,7 +259,7 @@ class BinClucMadSMADevelop(IStrategy):
         if current_profit > 0:
             return 0.99
         else:
-            trade_time_50 = trade.open_date_utc + timedelta(minutes=240)
+            trade_time_50 = trade.open_date_utc + timedelta(minutes=50)
             # trade_time_240 = trade.open_date_utc + timedelta(minutes=240)
             # Trade open more then 60 minutes. For this strategy it's means -> loss
             # Let's try to minimize the loss
@@ -280,9 +296,6 @@ class BinClucMadSMADevelop(IStrategy):
     def custom_sell(
         self, pair: str, trade: "Trade", current_time: "datetime", current_rate: float, current_profit: float, **kwargs
     ):
-
-        # return False
-
         dataframe, _ = self.dp.get_analyzed_dataframe(pair, self.timeframe)
         last_candle = dataframe.iloc[-1].squeeze()
 

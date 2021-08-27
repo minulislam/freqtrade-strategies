@@ -29,20 +29,10 @@ def SSLChannels(dataframe, length=7):
 class BinClucMadDevelop(IStrategy):
     INTERFACE_VERSION = 2
 
-    # minimal_roi = {
-    #     "0": 0.028,  # I feel lucky!
-    #     "10": 0.018,
-    #     "40": 0.005,
-    # }
-    minimal_roi = {
-        "0": 0.038,         # I feel lucky!
-        "10": 0.028,
-        "40": 0.015,
-        "180": 0.018,        # We're going up?
-    }
-
-
-    stoploss = -0.99  # effectively disabled.
+    minimal_roi = {"0": 0.038, "10": 0.028, "40": 0.015, "180": 0.018 }
+    # minimal_roi = {"0": 0.038, "20": 0.028, "40": 0.02, "60": 0.015, "180": 0.018 }
+    # minimal_roi = {"0": 0.20, "38": 0.074, "78": 0.025, "194": 0}
+    stoploss = -0.99
 
     timeframe = "5m"
     informative_timeframe = "1h"
@@ -63,7 +53,7 @@ class BinClucMadDevelop(IStrategy):
     # Custom stoploss
     use_custom_stoploss = False
     # Run "populate_indicators()" only for new candle.
-    process_only_new_candles = True
+    process_only_new_candles = False
 
     # Number of candles the strategy requires before producing valid signals
     startup_candle_count: int = 200
