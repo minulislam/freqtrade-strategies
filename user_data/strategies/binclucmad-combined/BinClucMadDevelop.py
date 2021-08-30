@@ -29,8 +29,8 @@ def SSLChannels(dataframe, length=7):
 class BinClucMadDevelop(IStrategy):
     INTERFACE_VERSION = 2
 
-    minimal_roi = {"0": 0.038, "10": 0.028, "40": 0.015, "180": 0.018 }
-    # minimal_roi = {"0": 0.038, "20": 0.028, "40": 0.02, "60": 0.015, "180": 0.018 }
+    # minimal_roi = {"0": 0.038, "10": 0.028, "40": 0.015, "180": 0.018 }
+    minimal_roi = {"0": 0.038, "20": 0.028, "40": 0.02, "60": 0.015, "180": 0.018 }
     # minimal_roi = {"0": 0.20, "38": 0.074, "78": 0.025, "194": 0}
     stoploss = -0.99
 
@@ -42,7 +42,7 @@ class BinClucMadDevelop(IStrategy):
     use_sell_signal = True
     sell_profit_only = False
     sell_profit_offset = 0.001
-    ignore_roi_if_buy_signal = False
+    ignore_roi_if_buy_signal = True
 
     # Trailing stoploss
     trailing_stop = False
@@ -51,9 +51,9 @@ class BinClucMadDevelop(IStrategy):
     trailing_stop_positive_offset = 0.03
 
     # Custom stoploss
-    use_custom_stoploss = False
+    use_custom_stoploss = True
     # Run "populate_indicators()" only for new candle.
-    process_only_new_candles = False
+    process_only_new_candles = True
 
     # Number of candles the strategy requires before producing valid signals
     startup_candle_count: int = 200
@@ -62,23 +62,23 @@ class BinClucMadDevelop(IStrategy):
         "buy_minimum_conditions": 1,
         #############
         # Enable/Disable conditions
-        "v6_buy_condition_0_enable": True,
-        "v6_buy_condition_1_enable": True,
-        "v6_buy_condition_2_enable": True,
-        "v6_buy_condition_3_enable": True,
-        "v8_buy_condition_0_enable": True,
-        "v8_buy_condition_1_enable": True,
-        "v8_buy_condition_2_enable": True,
-        "v8_buy_condition_3_enable": True,
-        "v8_buy_condition_4_enable": True,
+        "v6_buy_condition_0_enable": False, # avg 0.47 dd 27%
+        "v6_buy_condition_1_enable": True, # no trade
+        "v6_buy_condition_2_enable": True,  # avg 2.32
+        "v6_buy_condition_3_enable": True, # avg 1.12 dd 6%
+        "v8_buy_condition_0_enable": True, # avg 0.74
+        "v8_buy_condition_1_enable": False,  # avg 0.41 dd 37%
+        "v8_buy_condition_2_enable": True,   # avg 1.37
+        "v8_buy_condition_3_enable": False,  # avg 0.41
+        "v8_buy_condition_4_enable": True,   # avg 1.29
         "v9_buy_condition_0_enable": False,
-        "v9_buy_condition_1_enable": False,
-        "v9_buy_condition_2_enable": False,
-        "v9_buy_condition_3_enable": False,
+        "v9_buy_condition_1_enable": True,
+        "v9_buy_condition_2_enable": True,
+        "v9_buy_condition_3_enable": True,
         "v9_buy_condition_4_enable": False,
-        "v9_buy_condition_5_enable": False,
-        "v9_buy_condition_6_enable": False,
-        "v9_buy_condition_7_enable": False,
+        "v9_buy_condition_5_enable": True,
+        "v9_buy_condition_6_enable": True,
+        "v9_buy_condition_7_enable": True,
         "v9_buy_condition_8_enable": False,
         "v9_buy_condition_9_enable": False,
         "v9_buy_condition_10_enable": False,
@@ -89,7 +89,7 @@ class BinClucMadDevelop(IStrategy):
         # Enable/Disable conditions
         "v9_sell_condition_0_enable": False,
         "v8_sell_condition_0_enable": True,
-        "v8_sell_condition_1_enable": True,
+        "v8_sell_condition_1_enable": False,
     }
 
     # if you want to see which buy conditions were met
@@ -121,38 +121,38 @@ class BinClucMadDevelop(IStrategy):
     buy_bb40_bbdelta_close = DecimalParameter(0.005, 0.04, default=0.031, space="buy", optimize=False, load=True)
     buy_bb40_closedelta_close = DecimalParameter(0.01, 0.03, default=0.021, space="buy", optimize=False, load=True)
     buy_bb40_tail_bbdelta = DecimalParameter(0.2, 0.4, default=0.264, space="buy", optimize=False, load=True)
-    buy_bb20_close_bblowerband = DecimalParameter(0.8, 1.1, default=0.992, space="buy", optimize=False, load=True)
-    buy_bb20_volume = IntParameter(18, 36, default=29, space="buy", optimize=False, load=True)
+    buy_bb20_close_bblowerband = DecimalParameter(0.8, 1.1, default=0.992, space="buy", optimize=True, load=True)
+    buy_bb20_volume = IntParameter(18, 36, default=29, space="buy", optimize=True, load=True)
     buy_rsi_diff = DecimalParameter(34.0, 60.0, default=50.48, space="buy", decimals=2, optimize=False, load=True)
-    buy_min_inc = DecimalParameter(0.005, 0.05, default=0.01, space="buy", decimals=2, optimize=False, load=True)
-    buy_rsi_1h = DecimalParameter(40.0, 70.0, default=67.0, space="buy", decimals=2, optimize=False, load=True)
-    buy_rsi = DecimalParameter(30.0, 40.0, default=38.5, space="buy", decimals=2, optimize=False, load=True)
-    buy_mfi = DecimalParameter(36.0, 65.0, default=36.0, space="buy", decimals=2, optimize=False, load=True)
+    buy_min_inc = DecimalParameter(0.005, 0.05, default=0.01, space="buy", decimals=2, optimize=True, load=True)
+    buy_rsi_1h = DecimalParameter(40.0, 70.0, default=67.0, space="buy", decimals=2, optimize=True, load=True)
+    buy_rsi = DecimalParameter(30.0, 40.0, default=38.5, space="buy", decimals=2, optimize=True, load=True)
+    buy_mfi = DecimalParameter(36.0, 65.0, default=36.0, space="buy", decimals=2, optimize=True, load=True)
     buy_volume_1 = DecimalParameter(1.0, 10.0, default=2.0, space="buy", decimals=2, optimize=False, load=True)
     buy_ema_open_mult_1 = DecimalParameter(0.01, 0.05, default=0.02, space="buy", decimals=3, optimize=False, load=True)
     sell_custom_roi_profit_1 = DecimalParameter(
-        0.01, 0.03, default=0.01, space="sell", decimals=2, optimize=True, load=True
+        0.01, 0.03, default=0.01, space="sell", decimals=2, optimize=False, load=True
     )
-    sell_custom_roi_rsi_1 = DecimalParameter(40.0, 56.0, default=50, space="sell", decimals=2, optimize=True, load=True)
+    sell_custom_roi_rsi_1 = DecimalParameter(40.0, 56.0, default=50, space="sell", decimals=2, optimize=False, load=True)
     sell_custom_roi_profit_2 = DecimalParameter(
-        0.01, 0.20, default=0.04, space="sell", decimals=2, optimize=True, load=True
+        0.01, 0.20, default=0.04, space="sell", decimals=2, optimize=False, load=True
     )
-    sell_custom_roi_rsi_2 = DecimalParameter(42.0, 56.0, default=50, space="sell", decimals=2, optimize=True, load=True)
+    sell_custom_roi_rsi_2 = DecimalParameter(42.0, 56.0, default=50, space="sell", decimals=2, optimize=False, load=True)
     sell_custom_roi_profit_3 = DecimalParameter(
-        0.15, 0.30, default=0.08, space="sell", decimals=2, optimize=True, load=True
+        0.15, 0.30, default=0.08, space="sell", decimals=2, optimize=False, load=True
     )
     sell_custom_roi_rsi_3 = DecimalParameter(44.0, 58.0, default=56, space="sell", decimals=2, optimize=False, load=True)
-    sell_custom_roi_profit_4 = DecimalParameter(0.3, 0.7, default=0.14, space="sell", decimals=2, optimize=True, load=True)
+    sell_custom_roi_profit_4 = DecimalParameter(0.3, 0.7, default=0.14, space="sell", decimals=2, optimize=False, load=True)
     sell_custom_roi_rsi_4 = DecimalParameter(44.0, 60.0, default=58, space="sell", decimals=2, optimize=False, load=True)
-    sell_custom_roi_profit_5 = DecimalParameter(0.01, 0.1, default=0.04, space="sell", decimals=2, optimize=True, load=True)
-    sell_trail_profit_min_1 = DecimalParameter(0.1, 0.25, default=0.1, space="sell", decimals=3, optimize=True, load=True)
-    sell_trail_profit_max_1 = DecimalParameter(0.3, 0.5, default=0.4, space="sell", decimals=2, optimize=True, load=True)
-    sell_trail_down_1 = DecimalParameter(0.04, 0.1, default=0.03, space="sell", decimals=3, optimize=True, load=True)
-    sell_trail_profit_min_2 = DecimalParameter(0.01, 0.1, default=0.02, space="sell", decimals=3, optimize=True, load=True)
-    sell_trail_profit_max_2 = DecimalParameter(0.08, 0.25, default=0.1, space="sell", decimals=2, optimize=True, load=True)
-    sell_trail_down_2 = DecimalParameter(0.04, 0.2, default=0.015, space="sell", decimals=3, optimize=True, load=True)
+    sell_custom_roi_profit_5 = DecimalParameter(0.01, 0.1, default=0.04, space="sell", decimals=2, optimize=False, load=True)
+    sell_trail_profit_min_1 = DecimalParameter(0.1, 0.25, default=0.1, space="sell", decimals=3, optimize=False, load=True)
+    sell_trail_profit_max_1 = DecimalParameter(0.3, 0.5, default=0.4, space="sell", decimals=2, optimize=False, load=True)
+    sell_trail_down_1 = DecimalParameter(0.04, 0.1, default=0.03, space="sell", decimals=3, optimize=False, load=True)
+    sell_trail_profit_min_2 = DecimalParameter(0.01, 0.1, default=0.02, space="sell", decimals=3, optimize=False, load=True)
+    sell_trail_profit_max_2 = DecimalParameter(0.08, 0.25, default=0.1, space="sell", decimals=2, optimize=False, load=True)
+    sell_trail_down_2 = DecimalParameter(0.04, 0.2, default=0.015, space="sell", decimals=3, optimize=False, load=True)
     sell_custom_stoploss_1 = DecimalParameter(
-        -0.15, -0.03, default=-0.05, space="sell", decimals=2, optimize=True, load=True
+        -0.15, -0.03, default=-0.05, space="sell", decimals=2, optimize=False, load=True
     )
     # Buy  CombinedBinHClucAndMADV9
     v9_buy_condition_0_enable = CategoricalParameter([True, False], default=False, space="buy", optimize=False, load=True)
@@ -186,69 +186,24 @@ class BinClucMadDevelop(IStrategy):
     # minimum conditions to match in buy
     buy_minimum_conditions = IntParameter(1, 2, default=1, space='buy', optimize=False, load=True)
 
-    def custom_stoplossv8(
-        self, pair: str, trade: "Trade", current_time: datetime, current_rate: float, current_profit: float, **kwargs
-    ) -> float:
+
+
+    def custom_stoploss(self, pair: str, trade: 'Trade', current_time: datetime,
+                        current_rate: float, current_profit: float, **kwargs) -> float:
         # Manage losing trades and open room for better ones.
-
-        if current_profit > 0:
-            return 0.99
-        else:
-            trade_time_50 = trade.open_date_utc + timedelta(minutes=50)
-            # trade_time_240 = trade.open_date_utc + timedelta(minutes=240)
-            # Trade open more then 60 minutes. For this strategy it's means -> loss
-            # Let's try to minimize the loss
-
-            if current_time > trade_time_50:
-
-                try:
-                    number_of_candle_shift = int((current_time - trade_time_50).total_seconds() / 300)
-                    dataframe, _ = self.dp.get_analyzed_dataframe(pair, self.timeframe)
-                    candle = dataframe.iloc[-number_of_candle_shift].squeeze()
-                    if (candle["sma_200_dec"]) & (candle["sma_200_dec_1h"]):
-                        return 0.01
-                    # We are at bottom. Wait...
-                    if candle["rsi_1h"] < 30:
-                        return 0.99
-
-                    # Are we still sinking?
-                    if candle["close"] > candle["ema_200"]:
-                        if current_rate * 1.025 < candle["open"]:
-                            return 0.01
-
-                    if current_rate * 1.015 < candle["open"]:
-                        return 0.01
-
-                except IndexError as error:
-
-                    # Whoops, set stoploss at 10%
-                    return 0.1
-
-        return 0.99
-
-    def custom_stoploss(
-        self, pair: str, trade: "Trade", current_time: datetime, current_rate: float, current_profit: float, **kwargs
-    ) -> float:
-        # Manage losing trades and open room for better ones.
-        if (current_profit < 0) & (current_time - timedelta(minutes=280) > trade.open_date_utc):
+        if (current_profit < 0) & (
+            current_time - timedelta(minutes=280) > trade.open_date_utc
+        ):
             return 0.01
         elif current_profit < self.sell_custom_stoploss_1.value:
             dataframe, _ = self.dp.get_analyzed_dataframe(pair, self.timeframe)
-            candle = dataframe.iloc[-1].squeeze()
-            if candle is not None:
-                # if (candle["sma_200_dec"]) & (candle["sma_200_dec_1h"]):
-                #     return 0.01
-                # We are at bottom. Wait...
-                if candle["rsi_1h"] < 30:
-                    return 0.99
-                # Are we still sinking?
-                if candle["close"] > candle["ema_200"]:
-                    if current_rate * 1.025 < candle["open"]:
-                        return 0.01
-                if current_rate * 1.015 < candle["open"]:
+            last_candle = dataframe.iloc[-1].squeeze()
+            if last_candle is not None:
+                if (last_candle["sma_200_dec"]) & (last_candle["sma_200_dec_1h"]):
                     return 0.01
-
         return 0.99
+
+
 
     def custom_sell(
         self, pair: str, trade: "Trade", current_time: "datetime", current_rate: float, current_profit: float, **kwargs
@@ -344,6 +299,7 @@ class BinClucMadDevelop(IStrategy):
 
         # SMA
         dataframe["sma_5"] = ta.EMA(dataframe, timeperiod=5)
+        dataframe["ssma_5"] = ta.SMA(dataframe, timeperiod=5)
         dataframe["sma_200"] = ta.SMA(dataframe, timeperiod=200)
         dataframe["sma_200_dec"] = dataframe["sma_200"] < dataframe["sma_200"].shift(20)
         # RSI
@@ -434,7 +390,7 @@ class BinClucMadDevelop(IStrategy):
         ] = 1
         dataframe.loc[
             (
-                (dataframe["close"] < dataframe["sma_5"])
+                (dataframe["close"] < dataframe["ssma_5"])
                 & (dataframe["ssl_up_1h"] > dataframe["ssl_down_1h"])
                 & (dataframe["ema_50"] > dataframe["ema_200"])
                 & (dataframe["ema_50_1h"] > dataframe["ema_200_1h"])
