@@ -38,12 +38,11 @@ class BinClucMadV1(IStrategy):
     #     "40": 0.005,
     # }
     minimal_roi = {
-        "0": 0.038,         # I feel lucky!
+        "0": 0.038,  # I feel lucky!
         "10": 0.028,
         "40": 0.015,
-        "180": 0.018,        # We're going up?
+        "180": 0.018,  # We're going up?
     }
-
 
     stoploss = -0.99  # effectively disabled.
 
