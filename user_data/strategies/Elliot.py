@@ -1,4 +1,4 @@
-# --- Do not remove these libs ---
+﻿# --- Do not remove these libs ---
 from freqtrade.strategy.interface import IStrategy
 from typing import Dict, List
 from functools import reduce
@@ -19,6 +19,7 @@ from freqtrade.strategy import (
     IntParameter,
     CategoricalParameter,
 )
+
 import technical.indicators as ftt
 
 # @Rallipanos
@@ -107,9 +108,29 @@ class Elliot(IStrategy):
 
     plot_config = {
         "main_plot": {
-            "ma_buy": {"color": "orange"},
+             "sma_9": {"color": "bule"},
+             "hma_50": {"color": "bule"},
+            "ma_buy": {"color": "bule"},
             "ma_sell": {"color": "orange"},
+            "ma_sell_2": {"color": "red"},         
         },
+
+        'subplots': {
+             "EWO": {
+               'EWO': {'color': 'blue'},
+              },  
+             "RSI": { 
+               'rsi': {'color': 'blue'},       
+               'rsi_fast': {'color': 'red'},
+               'rsi_slow': {'color': 'orange'},
+              },
+              
+             "TREND": { 
+                'uptrend_1h': {'color': 'blue'},          
+              },  
+              
+         }
+
     }
 
     use_custom_stoploss = False
@@ -189,6 +210,13 @@ class Elliot(IStrategy):
         dataframe["rsi_fast"] = ta.RSI(dataframe, timeperiod=4)
         dataframe["rsi_slow"] = ta.RSI(dataframe, timeperiod=20)
         dataframe["rsi_100"] = ta.RSI(dataframe, timeperiod=100)
+
+        dataframe["ma_buy"] = ta.EMA(dataframe, int(self.base_nb_candles_buy.value)) * self.low_offset.value
+        dataframe["ma_sell"] = ta.EMA(dataframe, int(self.base_nb_candles_sell.value)) * self.high_offset.value
+        dataframe["ma_sell_2"] = ta.EMA(dataframe, int(self.base_nb_candles_sell.value)) * self.high_offset_2.value
+
+
+
 
         return dataframe
 
