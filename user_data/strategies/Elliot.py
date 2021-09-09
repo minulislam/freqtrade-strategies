@@ -108,8 +108,8 @@ class Elliot(IStrategy):
 
     plot_config = {
         "main_plot": {
-             "sma_9": {"color": "bule"},
-             "hma_50": {"color": "bule"},
+             "sma_9": {"color": "#736581"},
+             "hma_50": {"color": "#a9d"},
             "ma_buy": {"color": "bule"},
             "ma_sell": {"color": "orange"},
             "ma_sell_2": {"color": "red"},         
