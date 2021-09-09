@@ -8,20 +8,20 @@ services:
       context: .
       dockerfile: "./docker/Dockerfile.custom"
     restart: unless-stopped
-    container_name: ${CONTAINER_NAME:-ftbot}-${STRATEGY:-BinClucMadV1}
+    container_name: ${CONTAINER_NAME:-ftbot}-${STRATEGY:-BinClucMadSMADevelop}
     volumes:
       - "./user_data:/freqtrade/user_data"
     # Expose api on port 8080 (localhost only)
     # Please read the https://www.freqtrade.io/en/latest/rest-api/ documentation
     # before enabling this.
     ports:
-      - "0.0.0.0:${PORT:-8080}:8080"
+      - "0.0.0.0:${PORT:-8080}:${PORT:-8080}"
     # Default command used when running `docker compose up`
     command: >
       trade
       --logfile /freqtrade/user_data/logs/freqtrade.log
-      --db-url sqlite:////freqtrade/user_data/tradesv3.live.sqlite
+      --db-url sqlite:////freqtrade/user_data/${STRATEGY:-BinClucMadSMADevelop}.${MODE:-live}.sqlite
       --config /freqtrade/user_data/config.json
       --config /freqtrade/user_data/config-private.json
       --config /freqtrade/user_data/pairlist/${PAIRLIST:-binance-usdt-static}.json
-      --strategy ${STRATEGY:-SampleStrategy}
+      --strategy ${STRATEGY:-BinClucMadSMADevelop}
