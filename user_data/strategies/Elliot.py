@@ -108,7 +108,7 @@ class Elliot(IStrategy):
     inf_1h = "1h"
 
     process_only_new_candles = True
-    startup_candle_count = 39
+    startup_candle_count = 200
 
     plot_config = {
         "main_plot": {
