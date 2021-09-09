@@ -44,11 +44,6 @@ def EWO(dataframe, ema_length=5, ema2_length=35):
     return emadif
 
 
-def populate_indicators(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
-
-    return dataframe
-
-
 class Elliot(IStrategy):
     INTERFACE_VERSION = 2
 
@@ -108,7 +103,7 @@ class Elliot(IStrategy):
     inf_1h = "1h"
 
     process_only_new_candles = True
-    startup_candle_count = 200
+    startup_candle_count = 39
 
     plot_config = {
         "main_plot": {
@@ -271,7 +266,10 @@ class Elliot(IStrategy):
                 & (dataframe["volume"] > 0)
                 & (dataframe["rsi_fast"] > dataframe["rsi_slow"])
             )
-            | (
+        )
+
+        conditions.append(
+            (
                 (dataframe["sma_9"] < dataframe["hma_50"])
                 & (
                     dataframe["close"]
