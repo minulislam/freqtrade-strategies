@@ -67,15 +67,15 @@ class BinClucMadDevelop(IStrategy):
         "buy_minimum_conditions": 1,
         #############
         # Enable/Disable conditions
-        "v6_buy_condition_0_enable": True,
-        "v6_buy_condition_1_enable": True,
-        "v6_buy_condition_2_enable": True,
-        "v6_buy_condition_3_enable": True,
-        "v8_buy_condition_0_enable": True,
-        "v8_buy_condition_1_enable": True,
-        "v8_buy_condition_2_enable": True,
-        "v8_buy_condition_3_enable": True,
-        "v8_buy_condition_4_enable": True,
+        "v6_buy_condition_0_enable": False, # avg 0.47 dd 27%
+        "v6_buy_condition_1_enable": True, # no trade
+        "v6_buy_condition_2_enable": True,  # avg 2.32
+        "v6_buy_condition_3_enable": True, # avg 1.12 dd 6%
+        "v8_buy_condition_0_enable": True, # avg 0.74
+        "v8_buy_condition_1_enable": False,  # avg 0.41 dd 37%
+        "v8_buy_condition_2_enable": True,   # avg 1.37
+        "v8_buy_condition_3_enable": False,  # avg 0.41
+        "v8_buy_condition_4_enable": True,   # avg 1.29
         "v9_buy_condition_0_enable": False,
         "v9_buy_condition_1_enable": False,
         "v9_buy_condition_2_enable": False,
