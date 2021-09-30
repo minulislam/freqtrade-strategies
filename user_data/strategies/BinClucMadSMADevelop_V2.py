@@ -14,7 +14,7 @@ import logging
 logger = logging.getLogger(__name__)
 # -------------------------------------------------------------------------------------------------
 
-class BinClucMadSMADevelop(IStrategy):
+class BinClucMadSMADevelop_V2(IStrategy):
     INTERFACE_VERSION = 2
 
     # minimal_roi = {"0": 0.038, "20": 0.028, "40": 0.02, "60": 0.015, "180": 0.018, }
@@ -64,16 +64,17 @@ class BinClucMadSMADevelop(IStrategy):
         "v8_buy_condition_3_enable": False,  # avg 0.41
         "v8_buy_condition_4_enable": True,   # avg 1.29
         "v9_buy_condition_0_enable": False,
-        "v9_buy_condition_1_enable": False,
-        "v9_buy_condition_2_enable": False,
-        "v9_buy_condition_3_enable": False,
+        "v9_buy_condition_1_enable": True,
+        "v9_buy_condition_2_enable": True,
+        "v9_buy_condition_3_enable": True,
         "v9_buy_condition_4_enable": False,
-        "v9_buy_condition_5_enable": False,
-        "v9_buy_condition_6_enable": False,
-        "v9_buy_condition_7_enable": False,
+        "v9_buy_condition_5_enable": True,
+        "v9_buy_condition_6_enable": True,
+        "v9_buy_condition_7_enable": True,
         "v9_buy_condition_8_enable": False,
         "v9_buy_condition_9_enable": False,
         "v9_buy_condition_10_enable": False,
+
 
 
     }
@@ -281,7 +282,7 @@ class BinClucMadSMADevelop(IStrategy):
         self, pair: str, trade: "Trade", current_time: "datetime", current_rate: float, current_profit: float, **kwargs
     ):
 
-        # return False
+        #return False
 
         dataframe, _ = self.dp.get_analyzed_dataframe(pair, self.timeframe)
         last_candle = dataframe.iloc[-1].squeeze()
