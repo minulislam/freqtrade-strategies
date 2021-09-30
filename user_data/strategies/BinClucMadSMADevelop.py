@@ -800,7 +800,6 @@ class BinClucMadSMADevelop(IStrategy):
                 & (self.v8_buy_condition_4_enable.value == True)
             ),
             ['v8_buy_condition_4_enable', 'buy_tag']] = (1, 'buy_signal_v8_4')
-
         # start from here
         dataframe.loc[
             (
@@ -827,8 +826,8 @@ class BinClucMadSMADevelop(IStrategy):
                 )
                 & (self.v9_buy_condition_1_enable.value == True)
             ),
-            "v9_buy_condition_1_enable",
-        ] = 1
+            ['v9_buy_condition_1_enable', 'buy_tag']] = (1, 'buy_signal_v9_1')
+
         dataframe.loc[
             (
                 (dataframe["close"] > dataframe["ema_200"])
@@ -853,8 +852,8 @@ class BinClucMadSMADevelop(IStrategy):
                 )
                 & (self.v9_buy_condition_2_enable.value == True)
             ),
-            "v9_buy_condition_2_enable",
-        ] = 1
+            ['v9_buy_condition_2_enable', 'buy_tag']] = (1, 'buy_signal_v9_2')
+
         dataframe.loc[
             (
                 (dataframe["close"] > dataframe["ema_200_1h"])
@@ -866,8 +865,8 @@ class BinClucMadSMADevelop(IStrategy):
                 )
                 & (self.v9_buy_condition_3_enable.value == True)
             ),
-            "v9_buy_condition_3_enable",
-        ] = 1
+            ['v9_buy_condition_3_enable', 'buy_tag']] = (1, 'buy_signal_v9_3')
+
         dataframe.loc[
             (
                 (dataframe["rsi_1h"] < self.buy_rsi_1h_1.value)
@@ -878,8 +877,7 @@ class BinClucMadSMADevelop(IStrategy):
                 )
                 & (self.v9_buy_condition_4_enable.value == True)
             ),
-            "v9_buy_condition_4_enable",
-        ] = 1
+            ['v9_buy_condition_4_enable', 'buy_tag']] = (1, 'buy_signal_v9_4')
         dataframe.loc[
             (
                 (dataframe["close"] > dataframe["ema_200"])
@@ -905,8 +903,7 @@ class BinClucMadSMADevelop(IStrategy):
                 )
                 & (self.v9_buy_condition_5_enable.value == True)
             ),
-            "v9_buy_condition_5_enable",
-        ] = 1
+            ['v9_buy_condition_5_enable', 'buy_tag']] = (1, 'buy_signal_v9_5')
         dataframe.loc[
             (
                 (dataframe["ema_26"] > dataframe["ema_12"])
@@ -925,8 +922,7 @@ class BinClucMadSMADevelop(IStrategy):
                 )
                 & (self.v9_buy_condition_6_enable.value == True)
             ),
-            "v9_buy_condition_6_enable",
-        ] = 1
+            ['v9_buy_condition_6_enable', 'buy_tag']] = (1, 'buy_signal_v9_6')
         dataframe.loc[
             (
                 (dataframe["rsi_1h"] < self.buy_rsi_1h_2.value)
@@ -950,8 +946,7 @@ class BinClucMadSMADevelop(IStrategy):
                 )
                 & (self.v9_buy_condition_7_enable.value == True)
             ),
-            "v9_buy_condition_7_enable",
-        ] = 1
+            ['v9_buy_condition_7_enable', 'buy_tag']] = (1, 'buy_signal_v9_7')
         dataframe.loc[
             (
                 (dataframe["rsi_1h"] < self.buy_rsi_1h_3.value)
@@ -967,8 +962,7 @@ class BinClucMadSMADevelop(IStrategy):
                 )
                 & (self.v9_buy_condition_8_enable.value == True)
             ),
-            "v9_buy_condition_8_enable",
-        ] = 1
+            ['v9_buy_condition_8_enable', 'buy_tag']] = (1, 'buy_signal_v9_8')
         dataframe.loc[
             (
                 (dataframe["rsi_1h"] < self.buy_rsi_1h_4.value)
@@ -984,8 +978,7 @@ class BinClucMadSMADevelop(IStrategy):
                 )
                 & (self.v9_buy_condition_9_enable.value == True)
             ),
-            "v9_buy_condition_9_enable",
-        ] = 1
+            ['v9_buy_condition_9_enable', 'buy_tag']] = (1, 'buy_signal_v9_9')
         dataframe.loc[
             (
                 (dataframe["close"] < dataframe["sma_5"])
@@ -994,8 +987,8 @@ class BinClucMadSMADevelop(IStrategy):
                 & (dataframe["rsi"] < dataframe["rsi_1h"] - 43.276)
                 & (self.v9_buy_condition_10_enable.value == True)
             ),
-            "v9_buy_condition_10_enable",
-        ] = 1
+            ['v9_buy_condition_10_enable', 'buy_tag']] = (1, 'buy_signal_v9_10')
+
         dataframe.loc[
             (
                 (dataframe["close"] > dataframe["ema_200"])
