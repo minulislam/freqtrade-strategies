@@ -40,8 +40,8 @@ class BinClucMadSMADevelop(IStrategy):
     # Trailing stoploss
     trailing_stop = True
     trailing_only_offset_is_reached = True
-    trailing_stop_positive = 0.01
-    trailing_stop_positive_offset = 0.049
+    trailing_stop_positive = 0.005
+    trailing_stop_positive_offset = 0.05
 
     # Custom stoploss
     use_custom_stoploss = False
@@ -67,16 +67,17 @@ class BinClucMadSMADevelop(IStrategy):
         "v8_buy_condition_3_enable": False,  # avg 0.41
         "v8_buy_condition_4_enable": True,   # avg 1.29
         "v9_buy_condition_0_enable": False,
-        "v9_buy_condition_1_enable": False,
-        "v9_buy_condition_2_enable": False,
-        "v9_buy_condition_3_enable": False,
+        "v9_buy_condition_1_enable": True,
+        "v9_buy_condition_2_enable": True,
+        "v9_buy_condition_3_enable": True,
         "v9_buy_condition_4_enable": False,
-        "v9_buy_condition_5_enable": False,
-        "v9_buy_condition_6_enable": False,
-        "v9_buy_condition_7_enable": False,
+        "v9_buy_condition_5_enable": True,
+        "v9_buy_condition_6_enable": True,
+        "v9_buy_condition_7_enable": True,
         "v9_buy_condition_8_enable": False,
         "v9_buy_condition_9_enable": False,
         "v9_buy_condition_10_enable": False,
+
     }
     sell_params = {
         #############
