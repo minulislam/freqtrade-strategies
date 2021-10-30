@@ -2,7 +2,7 @@
    "pairlists":[
       {
          "method":"VolumePairList",
-         "number_assets":75,
+         "number_assets":80,
          "sort_key":"quoteVolume",
          "refresh_period":1800
       },
@@ -15,13 +15,9 @@
          "max_spread_ratio":0.005
       },
       {
-         "method":"PriceFilter",
-         "min_price":0.001
-      },
-      {
          "method":"RangeStabilityFilter",
          "lookback_days":3,
-         "min_rate_of_change":0.1,
+         "min_rate_of_change":0.05,
          "refresh_period":1800
       },
       {
@@ -30,11 +26,6 @@
          "min_volatility":0.02,
          "max_volatility":0.75,
          "refresh_period":43200
-      },
-      {
-         "method":"VolumePairList",
-         "number_assets":60,
-         "sort_key":"quoteVolume"
       },
       {
          "method":"ShuffleFilter"
