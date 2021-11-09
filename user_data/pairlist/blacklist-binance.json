@@ -4,7 +4,7 @@
       // Exchange
       "(BNB)/.*",
       // Major
-      "(BTC|ETH)/.*",
+      // "(BTC|ETH)/.*",
       // Leverage
       ".*(_PREMIUM|BEAR|BULL|DOWN|HALF|HEDGE|UP|[1235][SL])/.*",
       // Fiat
