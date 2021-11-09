@@ -17,8 +17,7 @@
      // kucoin for bcmsma strategy
      // "(JAR|XDB|YGG|ZORT|COMB|LTX|MASK|ONE|POL|CGG|MHC)/.*",
      // kucoin for nfiv7 strategies
-      "(QRDO|VELO|SOUL|MLN|XAVA|CIX100|RFOX|YOP|SOLVE|KRL|SUN|LPT|TARA|CIRUS|NKN|AAVE|KAT)/.*",
-      
+      "(QRDO|VELO|SOUL|MLN|XAVA|CIX100|RFOX|YOP|SOLVE|KRL|SUN|LPT|TARA|CIRUS|NKN|AAVE|LAYER|GENS|STORJ|ANKR|IDEA)/.*",
     ]
   }
 }
