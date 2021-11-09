@@ -1,4 +1,5 @@
 .env
+*.env
 user_data/data/*
 user_data/*.sqlite
 user_data/config*.json
