@@ -86,10 +86,11 @@ class Obelisk_Ichimoku_Slow_v1_3(IStrategy):
     process_only_new_candles = True
 
     minimal_roi = {
-        "0": 0.078,
-        "40": 0.062,
-        "99": 0.039,
-        "218": 0
+        "0": 0.10,
+        "60": 0.072,
+        "120": 0.049,
+        "240": 0.02,
+        "360": 0,
     }
 
     # WARNING setting a stoploss for this strategy doesn't make much sense, as it will buy
