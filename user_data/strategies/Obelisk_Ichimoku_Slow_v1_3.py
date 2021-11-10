@@ -92,6 +92,11 @@ class Obelisk_Ichimoku_Slow_v1_3(IStrategy):
         "240": 0.02,
         "360": 0,
     }
+    # Trailing stoploss (not used)
+    trailing_stop = True
+    trailing_only_offset_is_reached = True
+    trailing_stop_positive = 0.005
+    trailing_stop_positive_offset = 0.04
 
     # WARNING setting a stoploss for this strategy doesn't make much sense, as it will buy
     # back into the trend at the next available opportunity, unless the trend has ended,
