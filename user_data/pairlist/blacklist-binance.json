@@ -14,7 +14,7 @@
       // Others
       "(CHZ|CTXC|HBAR|NMR|SHIB|SLP|XVS|ONG|ARDR)/.*",
       // My strategy blacklist
-      "(ANKR|YGG|BAT|ENJ|ALICE|FIDA|IOTX)/.*"
+      "(ANKR|YGG|BAT|ENJ)/.*"
 
     ]
   }
