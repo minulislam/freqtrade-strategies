@@ -8,6 +8,7 @@ import talib.abstract as ta
 from freqtrade.strategy.interface import IStrategy
 from freqtrade.strategy import merge_informative_pair, timeframe_to_minutes
 from freqtrade.exchange import timeframe_to_prev_date
+from freqtrade.data.dataprovider import DataProvider
 from pandas import DataFrame, Series, concat
 from functools import reduce
 import math
@@ -88,16 +89,16 @@ else:
 ###########################################################################################################
 ##               DONATIONS                                                                               ##
 ##                                                                                                       ##
-##   Absolutely not required. However, will be accepted as a token of appreciation.                      ##
-##                                                                                                       ##
 ##   BTC: bc1qvflsvddkmxh7eqhc4jyu5z5k6xcw3ay8jl49sk                                                     ##
 ##   ETH (ERC20): 0x83D3cFb8001BDC5d2211cBeBB8cB3461E5f7Ec91                                             ##
-##   BEP20/BSC (ETH, BNB, ...): 0x86A0B21a20b39d16424B7c8003E4A7e12d78ABEe                               ##
+##   BEP20/BSC (USDT, ETH, BNB, ...): 0x86A0B21a20b39d16424B7c8003E4A7e12d78ABEe                         ##
+##   TRC20/TRON (USDT, TRON, ...): TTAa9MX6zMLXNgWMhg7tkNormVHWCoq8Xk                                    ##
 ##                                                                                                       ##
 ##               REFERRAL LINKS                                                                          ##
 ##                                                                                                       ##
-##  Binance: https://accounts.binance.com/en/register?ref=37365811                                       ##
-##  Kucoin: https://www.kucoin.com/ucenter/signup?rcode=rJTLZ9K                                          ##
+##  Binance: https://accounts.binance.com/en/register?ref=EAZC47FM (5% discount on trading fees)         ##
+##  Kucoin: https://www.kucoin.com/r/QBSSSPYV (5% discount on trading fees)                              ##
+##  Gate.io: https://www.gate.io/signup/8054544                                                          ##
 ##  Huobi: https://www.huobi.com/en-us/topic/double-reward/?invite_code=ubpt2223                         ##
 ###########################################################################################################
 
@@ -2283,6 +2284,7 @@ class NostalgiaForInfinityNext(IStrategy):
 
     def __init__(self, config: dict) -> None:
         super().__init__(config)
+        #self.dp = DataProvider(config, config['exchange'])
         if self.target_profit_cache is None:
             self.target_profit_cache = Cache(
                 self.config["user_data_dir"] / "data-nfi-profit_target_by_pair.json"
@@ -2424,8 +2426,6 @@ class NostalgiaForInfinityNext(IStrategy):
 
         # Forward fill empty cells (due to different df shapes)
         self.coin_metrics['tg_dataframe'].fillna(0, inplace=True)
-
-        self.coin_metrics['tg_dataframe'].to_html('pct_df.html')
 
         # Store and drop date column for value sorting
         pair_dates = self.coin_metrics['tg_dataframe']['date']
