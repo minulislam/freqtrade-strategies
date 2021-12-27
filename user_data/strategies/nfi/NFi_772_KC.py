@@ -79,7 +79,7 @@ else:
 ###########################################################################################################
 
 
-class NFi-772-KC(IStrategy):
+class NFi_772_KC(IStrategy):
     INTERFACE_VERSION = 2
 
     plot_config = {
