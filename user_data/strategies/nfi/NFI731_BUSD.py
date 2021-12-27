@@ -70,7 +70,7 @@ log = logging.getLogger(__name__)
 ###########################################################################################################
 
 
-class NostalgiaForInfinityNext(IStrategy):
+class NFI731_BUSD(IStrategy):
     INTERFACE_VERSION = 2
 
     # # ROI table:
