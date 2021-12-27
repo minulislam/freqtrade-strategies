@@ -79,7 +79,7 @@ else:
 ###########################################################################################################
 
 
-class NostalgiaForInfinityNext(IStrategy):
+class NFi-772-KC(IStrategy):
     INTERFACE_VERSION = 2
 
     plot_config = {
